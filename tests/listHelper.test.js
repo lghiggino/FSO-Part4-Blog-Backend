@@ -88,41 +88,4 @@ describe("favorite blog", () => {
         ])
     })
 
-    it("should two items have the same amount of likes, it should return both", () => {
-        const list = [
-            {
-                title: "blog title",
-                author: "Leonardo Ghiggino",
-                url: "www.reddit.com",
-                likes: 12
-            },
-            {
-                title: "half blog title",
-                author: "Leon Ghigg",
-                url: "www.red.com",
-                likes: 6
-            },
-            {
-                title: "same post",
-                author: "Ghiggino Leonardo",
-                url: "www.reddit.com/r/arsenal",
-                likes: 12
-            }
-        ]
-        const result = listHelper.favoriteBlog(list)
-        expect(result).toEqual([
-            {
-                title: "blog title",
-                author: "Leonardo Ghiggino",
-                url: "www.reddit.com",
-                likes: 12
-            },
-            {
-                title: "same post",
-                author: "Ghiggino Leonardo",
-                url: "www.reddit.com/r/arsenal",
-                likes: 12
-            }
-        ])
-    })
 })

@@ -1,5 +1,4 @@
 const dummy = (blogs) => {
-    console.log(blogs)
     return 1
 }
 
@@ -10,9 +9,21 @@ const totalLikes = (list) => {
 }
 
 const favoriteBlog = (list) => {
-    console.log(list.length)
     if (list.length === 0) { return [] }
-   
+    //criar um elemento dummy para comparar
+    let dummy = {
+        title: "",
+        author: "",
+        url: "",
+        likes: 0
+    }
+    // console.log(dummy.likes)
+    for (let i = 0; i < list.length; i++){
+        if(list[i].likes > dummy.likes){
+            dummy = list[i]
+        }
+    }
+    return [dummy]
 }
 
 module.exports = {
