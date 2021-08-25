@@ -15,14 +15,14 @@ describe("connects with MongoDB", () => {
         })
         const Note = mongoose.model("Note", noteSchema)
         const note = new Note({
-            content: "Banana 3",
+            content: "Banana 1",
             date: new Date(),
             important: true,
         })
         const res = await note.save()
         await mongoose.connection.close()
 
-        expect(res.content).toEqual("Banana 3")
+        expect(res.content).toEqual("Banana 1")
         expect(res.important).toBe(true)
     })
 })
