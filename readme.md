@@ -6,3 +6,7 @@ To run in test mode:
 - open your local GUI for mongoDB
 - see the beauty in there
 - I'm very happy as I'm writing this. It worked by intuition, which means I'm actually learning stuff
+
+
+
+-- changed readme on windows
