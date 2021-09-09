@@ -49,16 +49,19 @@ describe("GET", () => {
         const processedBlogPostToView = JSON.parse(JSON.stringify(blogPostToView))
 
         expect(resultBlogPost.body).toEqual(processedBlogPostToView)
-
     })
 })
+
+//PAREI em 4.10
+
+
 describe("POST", () => {
     it("should create a new blogPost", async () => {
         const newBlogPost = new Blog({
             title: "Sunflower Samurai",
             author: "Jazzinut",
             url: "spotify.com/jazzinut/sunflowerSamurai",
-            likes: 0
+            likes: 1
         })
 
         await newBlogPost.save()
@@ -68,6 +71,39 @@ describe("POST", () => {
         expect(getAll.body[3].title).toBe("Sunflower Samurai")
         expect(getAll.body[3].url).toBe("spotify.com/jazzinut/sunflowerSamurai")
     })
+
+    it.only("should receive likes=0 if likes is missing from request", async () => {
+        const newBlogPost = new Blog({
+            title: "Sunflower Samurai",
+            author: "Jazzinut",
+            url: "spotify.com/jazzinut/sunflowerSamurai",
+        })
+
+        await api
+            .post("/api/blogs")
+            .send(newBlogPost)
+
+        const getAll = await api.get("/api/blogs")
+        console.log(getAll.body[3])
+        expect(getAll.body.length).toBe(4)
+        expect(getAll.body[3].likes).toBe(0)
+    })
+
+    it("should return 400 if !title && !url", async () => {
+        const newBlogPost = new Blog({
+            title: "",
+            author: "Jazzinut",
+            url: "",
+            likes: 2
+        })
+
+        await api
+            .post("/api/blogs")
+            .send(newBlogPost)
+            .expect(400)
+    })
+
+
 })
 describe("DELETE", () => { })
 
