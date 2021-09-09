@@ -72,7 +72,7 @@ describe("POST", () => {
         expect(getAll.body[3].url).toBe("spotify.com/jazzinut/sunflowerSamurai")
     })
 
-    it.only("should receive likes=0 if likes is missing from request", async () => {
+    it.only("should receive likes: 0 if likes is missing from request", async () => {
         const newBlogPost = new Blog({
             title: "Sunflower Samurai",
             author: "Jazzinut",
