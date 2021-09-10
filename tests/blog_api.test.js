@@ -52,8 +52,6 @@ describe("GET", () => {
     })
 })
 
-//PAREI em 4.10
-
 
 describe("POST", () => {
     it("should create a new blogPost", async () => {
@@ -72,7 +70,7 @@ describe("POST", () => {
         expect(getAll.body[3].url).toBe("spotify.com/jazzinut/sunflowerSamurai")
     })
 
-    it.only("should receive likes: 0 if likes is missing from request", async () => {
+    it.skip("should receive likes: 0 if likes is missing from request", async () => {
         const newBlogPost = new Blog({
             title: "Sunflower Samurai",
             author: "Jazzinut",
@@ -105,7 +103,21 @@ describe("POST", () => {
 
 
 })
-describe("DELETE", () => { })
+describe("DELETE", () => {
+    it("should be able to delete one using its ID", async () => {
+        const blogsAtStart = await helper.blogPostsInDb()
+
+        const blogToRemove = blogsAtStart[0]
+
+        await api.delete(`api/notes/${blogToRemove.id}`).expect(204)
+
+        const blogsAtEnd = await helper.blogPostsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialNotes.length - 1)
+
+        const contents = blogsAtEnd.map(r => r.content)
+        expect(contents).not.toContain(blogToRemove.content)
+    })
+})
 
 
 afterAll(() => {
