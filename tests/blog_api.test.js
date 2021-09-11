@@ -118,21 +118,39 @@ describe("POST", () => {
 
 })
 describe("DELETE", () => {
-    it.only("should be able to delete one using its ID", async () => {
+    it("should be able to delete one using its ID", async () => {
         const blogPostsAtStart = await helper.blogPostsInDb()
         const blogPostToRemove = blogPostsAtStart[0]
 
         await api.delete(`/api/blogs/${blogPostToRemove.id}`).expect(204)
 
-        // console.log(resultBlogPost.body)
-
-        // const processedBlogPostToView = JSON.parse(JSON.stringify(blogPostToView))
-
-        // expect(resultBlogPost.body).toEqual(processedBlogPostToView)
         const response = await api.get("/api/blogs")
 
         expect(response.body).toHaveLength(helper.initialBlogPosts.length - 1)
         expect(response.body).not.toContain(blogPostToRemove.title)
+    })
+})
+
+describe("UPDATE", () => {
+    it.only("should update the content of a single note", async () => {
+        const blogPostsAtStart = await helper.blogPostsInDb()
+        let blogPostToUpdate = blogPostsAtStart[0]
+
+        blogPostToUpdate = { ...blogPostToUpdate, likes: blogPostToUpdate.likes + 1 }
+
+        await api.put(`/api/blogs/${blogPostToUpdate.id}`).send(blogPostToUpdate)
+
+        const response = await api.get("/api/blogs")
+
+        expect(response.body).toHaveLength(helper.initialBlogPosts.length)
+        expect(response.body[0]).toMatchObject(
+            {
+                title: "New Shoes",
+                author: "Blue Wednesday",
+                url: "spotify.com/blueWednesday/newShoes",
+                likes: 3,
+                id: blogPostToUpdate.id
+            })
     })
 })
 
