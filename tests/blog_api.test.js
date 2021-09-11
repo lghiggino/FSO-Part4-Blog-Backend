@@ -30,7 +30,7 @@ describe("GET", () => {
         expect(result.body[0].title).toBe("New Shoes")
     })
 
-    it("should test if the returned object uses an 'id' property", async () => {
+    it("should test if the returned object uses an id property", async () => {
         const result = await api.get("/api/blogs/")
 
         expect(result.body[0].id).toBeDefined
@@ -70,7 +70,22 @@ describe("POST", () => {
         expect(getAll.body[3].url).toBe("spotify.com/jazzinut/sunflowerSamurai")
     })
 
-    it.skip("should receive likes: 0 if likes is missing from request", async () => {
+    it("should reject an empty blogPost", async () => {
+        const newBlogPost = new Blog({
+
+        })
+
+        await api
+            .post("/api/blogs")
+            .send(newBlogPost)
+            .expect(400)
+
+        const response = await api.get("/api/blogs")
+
+        expect(response.body).toHaveLength(helper.initialBlogPosts.length)
+    })
+
+    it("should receive likes: 0 if likes is missing from request", async () => {
         const newBlogPost = new Blog({
             title: "Sunflower Samurai",
             author: "Jazzinut",
@@ -82,7 +97,6 @@ describe("POST", () => {
             .send(newBlogPost)
 
         const getAll = await api.get("/api/blogs")
-        console.log(getAll.body[3])
         expect(getAll.body.length).toBe(4)
         expect(getAll.body[3].likes).toBe(0)
     })
@@ -104,18 +118,21 @@ describe("POST", () => {
 
 })
 describe("DELETE", () => {
-    it("should be able to delete one using its ID", async () => {
-        const blogsAtStart = await helper.blogPostsInDb()
+    it.only("should be able to delete one using its ID", async () => {
+        const blogPostsAtStart = await helper.blogPostsInDb()
+        const blogPostToRemove = blogPostsAtStart[0]
 
-        const blogToRemove = blogsAtStart[0]
+        await api.delete(`/api/blogs/${blogPostToRemove.id}`).expect(204)
 
-        await api.delete(`api/notes/${blogToRemove.id}`).expect(204)
+        // console.log(resultBlogPost.body)
 
-        const blogsAtEnd = await helper.blogPostsInDb()
-        expect(blogsAtEnd).toHaveLength(helper.initialNotes.length - 1)
+        // const processedBlogPostToView = JSON.parse(JSON.stringify(blogPostToView))
 
-        const contents = blogsAtEnd.map(r => r.content)
-        expect(contents).not.toContain(blogToRemove.content)
+        // expect(resultBlogPost.body).toEqual(processedBlogPostToView)
+        const response = await api.get("/api/blogs")
+
+        expect(response.body).toHaveLength(helper.initialBlogPosts.length - 1)
+        expect(response.body).not.toContain(blogPostToRemove.title)
     })
 })
 
