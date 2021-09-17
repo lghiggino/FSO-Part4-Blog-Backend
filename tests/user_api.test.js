@@ -31,7 +31,7 @@ describe("GET - USERS", () => {
         expect(response.body).toHaveLength(2)
     })
 
-    it.only("should get a user by its username", async () => {
+    it("should get a user by its username", async () => {
         //create a new user
         const passwordHash = await bcrypt.hash("lghiggino", 10)
         const newUser = new User({
@@ -51,7 +51,7 @@ describe("GET - USERS", () => {
 
 })
 
-describe.skip("POST - USERS", () => {
+describe("POST - USERS", () => {
     it("should create with a fresh username", async () => {
         const usersAtStart = await helper.usersInDb()
 
@@ -75,7 +75,7 @@ describe.skip("POST - USERS", () => {
         expect(usernames).toContain(newUser.username)
     })
 
-    it.skip("should return with error if username already exists", async () => {
+    it("should return with error if username already exists", async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
