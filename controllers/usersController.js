@@ -31,6 +31,13 @@ usersRouter.get("/:username", async (request, response, next) => {
 usersRouter.post("/", async (request, response, next) => {
     const body = request.body
 
+    if (body.username.length < 3) {
+        response.status(400).send({ error: "username must have at least 3 characters" })
+    }
+    if (body.password.length < 3) {
+        response.status(400).send({ error: "password must have at least 3 characters" })
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 

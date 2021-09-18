@@ -75,7 +75,7 @@ describe("POST - USERS", () => {
         expect(usernames).toContain(newUser.username)
     })
 
-    it("should return with error if username already exists", async () => {
+    it("should return with error if username is not unique", async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
@@ -91,6 +91,48 @@ describe("POST - USERS", () => {
             .expect("Content-Type", /application\/json/)
 
         expect(result.body.error).toContain("`username` to be unique")
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    it("should return with error if username is too short", async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: "ab",
+            name: "failedUser",
+            password: "validPassword",
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body.error).toContain("username must have at least 3 characters")
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    it("should return with error if password is too short", async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: "validUsername",
+            name: "failedUser",
+            password: "ab",
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body.error).toContain("password must have at least 3 characters")
 
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
