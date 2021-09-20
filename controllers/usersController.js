@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt")
+const Blog = require("../models/blogModel")
 const usersRouter = require("express").Router()
 const User = require("../models/userModel")
+const blogsRouter = require("./blogsController")
 
 
 //FAZER O POPULATE PARA REALIZAR 4.17
@@ -33,6 +35,8 @@ usersRouter.get("/:username", async (request, response, next) => {
 usersRouter.post("/", async (request, response, next) => {
     const body = request.body
 
+    const blog = await Blog.findById(body.blogId)
+
     if (body.username.length < 3) {
         response.status(400).send({ error: "username must have at least 3 characters" })
     }
@@ -43,14 +47,16 @@ usersRouter.post("/", async (request, response, next) => {
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
-    const user = new User({
-        username: body.username,
-        name: body.name,
-        passwordHash
-    })
-
     try {
+        const user = new User({
+            username: body.username,
+            name: body.name,
+            passwordHash
+        })
+
         const savedUser = await user.save()
+        blog.user = user.blogs.concat(savedUser._id)
+        await blog.save()
         response.json(savedUser)
     } catch (error) {
         next(error)
