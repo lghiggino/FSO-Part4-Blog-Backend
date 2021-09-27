@@ -2,40 +2,13 @@ const bcrypt = require("bcrypt")
 const Blog = require("../models/blogModel")
 const usersRouter = require("express").Router()
 const User = require("../models/userModel")
-const blogsRouter = require("./blogsController")
 
 
 //FAZER O POPULATE PARA REALIZAR 4.17
-
-usersRouter.get("/", async (request, response, next) => {
-    try {
-        const users = await User.find({}).populate("blogs", { title: 1, author: 1, url: 1, likes: 1 })
-        response.json(users)
-    }
-    catch (error) {
-        next(error)
-    }
-})
-
-
-usersRouter.get("/:username", async (request, response, next) => {
-    try {
-        const user = await User.findOne({ username: request.params.username })
-        if (user) {
-            response.json(user)
-        } else {
-            response.status(404).end()
-        }
-    }
-    catch (error) {
-        next(error)
-    }
-})
-
 usersRouter.post("/", async (request, response, next) => {
     const body = request.body
 
-    const blog = await Blog.findById(body.blogId)
+    // const blog = await Blog.findById(body.blogId)
 
     if (body.username.length < 3) {
         response.status(400).send({ error: "username must have at least 3 characters" })
@@ -55,13 +28,12 @@ usersRouter.post("/", async (request, response, next) => {
         })
 
         const savedUser = await user.save()
-        blog.user = user.blogs.concat(savedUser._id)
-        await blog.save()
+        // blog.user = user.blogs.concat(savedUser._id)
+        // await blog.save()
         response.json(savedUser)
     } catch (error) {
         next(error)
     }
-
 })
 
 usersRouter.delete("/:id", async (request, response, next) => {
@@ -93,5 +65,30 @@ usersRouter.delete("/:id", async (request, response, next) => {
 //         next(error)
 //     }
 // })
+
+
+usersRouter.get("/", async (request, response, next) => {
+    try {
+        const users = await User.find({}).populate("blogs", { title: 1, author: 1, url: 1, likes: 1 })
+        response.json(users)
+    }
+    catch (error) {
+        next(error)
+    }
+})
+
+usersRouter.get("/:username", async (request, response, next) => {
+    try {
+        const user = await User.findOne({ username: request.params.username })
+        if (user) {
+            response.json(user)
+        } else {
+            response.status(404).end()
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+})
 
 module.exports = usersRouter

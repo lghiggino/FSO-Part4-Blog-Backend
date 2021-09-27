@@ -2,16 +2,16 @@
 
 POST http://localhost:3003/api/blogs 
 Content-Type: application/json 
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIiwiaWQiOiI2MTRmYTFhNjkzY2ExMDEzYTMzMzQxYzgiLCJpYXQiOjE2MzI2MDg4MDcsImV4cCI6MTYzMjYxMjQwN30.LbnMyrXkK_x4YfmWF2cbNQICWwgLqDxurBvPDOFNXfw
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxnaGlnZ2lubyIsImlkIjoiNjE1MTA4NmRmYjdmZDYxN2Q2MDhjNDgyIiwiaWF0IjoxNjMyNzAxNDQ0LCJleHAiOjE2MzI3MDUwNDR9.CYQA4EAz-lAR9KPiTeosAk1LZIIYOOgVGb39doS4nGs
 
 {
-    "title": "Full Stack Open 2020", 
-    "author": "Au Thori", 
-    "url": "www.google.fi", 
-    "likes": "2020",
-    "user": "614fa85e4e23ae24a4813b1e"
+    "title": "will the id be saved correctly?", 
+    "author": "Leonardo Ghiggino", 
+    "url": "www.willthisshitwork.com", 
+    "likes": "2021",
+    "user": "6151086dfb7fd617d608c482"
 }
 
 
 # cazuza = 614fa85e4e23ae24a4813b1e
-#lghiggino = 
+#lghiggino = 6151086dfb7fd617d608c482

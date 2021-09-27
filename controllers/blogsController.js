@@ -46,6 +46,7 @@ blogsRouter.post("/", async (request, response, next) => {
     }
 
     const user = await User.findById(decodedToken.id)
+    console.log("+===============+USER", user)
 
     if (!body.title && !body.url) {
         response.status(400).end()
@@ -58,7 +59,7 @@ blogsRouter.post("/", async (request, response, next) => {
             author: body.author,
             url: body.url,
             likes: body.likes,
-            user: body.userId
+            user: user._id
         })
 
         const savedBlog = await blog.save()

@@ -2,9 +2,10 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "name": "Agenor de Miranda", 
-    "username": "cazuza",
-    "password": "orelhaFria"
+    "blogs": [],
+    "name": "Superuser", 
+    "username": "root",
+    "password": "salainen"
 }
 
 
