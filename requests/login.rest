@@ -6,6 +6,16 @@ Content-Type: application/json
     "password": "lghiggino"
 }
 
+# FAILED LOGIN
+###
+
+POST http://localhost:3003/api/login 
+Content-Type: application/json
+
+{
+    "username": "lghiggino", 
+    "password": "orelhaFria"
+}
 
 
 # cazuza - orelhaFria

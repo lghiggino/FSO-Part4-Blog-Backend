@@ -34,6 +34,7 @@ const getTokenFrom = request => {
     if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
         return authorization.substring(7)
     }
+    return null
 }
 
 blogsRouter.post("/", async (request, response, next) => {
@@ -46,7 +47,7 @@ blogsRouter.post("/", async (request, response, next) => {
     }
 
     const user = await User.findById(decodedToken.id)
-    console.log("+===============+USER", user)
+
 
     if (!body.title && !body.url) {
         response.status(400).end()
