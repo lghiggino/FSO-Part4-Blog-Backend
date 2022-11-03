@@ -1,13 +1,15 @@
-GET http://localhost:3001/api/blog
+GET http://localhost:3001/api/blogs
 ###
-GET http://localhost:3001/api/blog/1
+GET http://localhost:3001/api/blogs/1
 ###
-POST http://localhost:3001/api/blog
+POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "name": "Joao da Silva",
-    "number": "555-987654321"
+    "title": "This is a post test",
+    "author": "Leonardo N Ghiggino",
+    "url": "http://localhost:3001/teste/teste",
+    "likes": 0
 }
 ###
-DELETE http://localhost:3001/api/blog/635a6b7de718bcff9d5fdb3a
+DELETE http://localhost:3001/api/blogs/635a6b7de718bcff9d5fdb3a
