@@ -1,0 +1,13 @@
+GET http://localhost:3001/api/blog
+###
+GET http://localhost:3001/api/blog/1
+###
+POST http://localhost:3001/api/blog
+Content-Type: application/json
+
+{
+    "name": "Joao da Silva",
+    "number": "555-987654321"
+}
+###
+DELETE http://localhost:3001/api/blog/635a6b7de718bcff9d5fdb3a
