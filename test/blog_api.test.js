@@ -38,13 +38,36 @@ test("blogs are returned as json", async () => {
 test("there are two blogs", async () => {
   const response = await api.get("/api/blogs");
 
-  expect(response.body).toHaveLength(2);
+  expect(response.body).toHaveLength(initialBlogs.length);
 });
 
 test("the first blog is Blog 01", async () => {
   const response = await api.get("/api/blogs");
 
-  expect(response.body[0].title).toBe("Blog 01");
+  const titles = response.body.map((r) => r.title);
+  expect(titles).toContain("Blog 01");
+});
+
+test("a valid blog can be added", async () => {
+  const newBlog = {
+    title: "async/await simplifies making async calls",
+    author: "Mluukai",
+    url: "www.fullstackopen.com",
+    likes: 3
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+
+  const titles = response.body.map((r) => r.title);
+
+  expect(response.body).toHaveLength(initialBlogs.length + 1);
+  expect(titles).toContain("async/await simplifies making async calls");
 });
 
 afterAll(() => {
