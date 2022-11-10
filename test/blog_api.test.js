@@ -2,23 +2,14 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blog.model");
+const {
+  tenSeconds,
+  initialBlogs,
+  nonExistingId,
+  blogsInDb,
+} = require("../utils/list_helper");
 
 const api = supertest(app);
-
-const initialBlogs = [
-  {
-    title: "Blog 01",
-    author: "Leonardo Ghiggino",
-    url: "www.google.com",
-    likes: 1,
-  },
-  {
-    title: "Blog 02",
-    author: "Leonardo Ghiggino",
-    url: "www.google.com",
-    likes: 2,
-  },
-];
 
 beforeEach(async () => {
   await Blog.deleteMany({});
