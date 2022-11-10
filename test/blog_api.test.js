@@ -53,7 +53,7 @@ test("a valid blog can be added", async () => {
     title: "async/await simplifies making async calls",
     author: "Mluukai",
     url: "www.fullstackopen.com",
-    likes: 3
+    likes: 3,
   };
 
   await api
@@ -68,6 +68,18 @@ test("a valid blog can be added", async () => {
 
   expect(response.body).toHaveLength(initialBlogs.length + 1);
   expect(titles).toContain("async/await simplifies making async calls");
+});
+
+test("blog without content is not added", async () => {
+  const newBlog = {
+    likes: 0,
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const response = await api.get("/api/blogs");
+
+  expect(response.body).toHaveLength(initialBlogs.length);
 });
 
 afterAll(() => {
