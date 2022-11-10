@@ -13,64 +13,99 @@ const api = supertest(app);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+  await Blog.insertMany(initialBlogs);
 });
 
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-}, 10000);
+describe("when there is initially some blogs saved", () => {
+  test("blogs are returned as json", async () => {
+    await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  }, 10000);
 
-test("there are two blogs", async () => {
-  const response = await api.get("/api/blogs");
+  test("there are two blogs", async () => {
+    const response = await api.get("/api/blogs");
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+    expect(response.body).toHaveLength(initialBlogs.length);
+  });
+
+  test("the first blog is Blog 01", async () => {
+    const response = await api.get("/api/blogs");
+
+    const titles = response.body.map((r) => r.title);
+    expect(titles).toContain("Blog 01");
+  });
 });
 
-test("the first blog is Blog 01", async () => {
-  const response = await api.get("/api/blogs");
+describe("addition of a new blog", () => {
+  test("a valid blog can be added", async () => {
+    const newBlog = {
+      title: "async/await simplifies making async calls",
+      author: "Mluukai",
+      url: "www.fullstackopen.com",
+      likes: 3,
+    };
 
-  const titles = response.body.map((r) => r.title);
-  expect(titles).toContain("Blog 01");
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    const titles = response.body.map((r) => r.title);
+
+    expect(response.body).toHaveLength(initialBlogs.length + 1);
+    expect(titles).toContain("async/await simplifies making async calls");
+  });
+
+  test("blog without title is not added", async () => {
+    const newBlog = {
+      likes: 0,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+
+    const response = await api.get("/api/blogs");
+
+    expect(response.body).toHaveLength(initialBlogs.length);
+  });
 });
 
-test("a valid blog can be added", async () => {
-  const newBlog = {
-    title: "async/await simplifies making async calls",
-    author: "Mluukai",
-    url: "www.fullstackopen.com",
-    likes: 3,
-  };
+describe("deletion of a blog", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await blogsInDb();
+    const blogToDelete = blogsAtStart[0];
 
-  await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(201)
-    .expect("Content-Type", /application\/json/);
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
 
-  const response = await api.get("/api/blogs");
+    const blogsAtEnd = await blogsInDb();
 
-  const titles = response.body.map((r) => r.title);
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1);
 
-  expect(response.body).toHaveLength(initialBlogs.length + 1);
-  expect(titles).toContain("async/await simplifies making async calls");
+    const titles = blogsAtEnd.map((r) => r.title);
+
+    expect(titles).not.toContain(blogToDelete.title);
+  });
 });
 
-test("blog without content is not added", async () => {
-  const newBlog = {
-    likes: 0,
-  };
+describe("update of a blog", () => {
+  test("succeeds with status code 201 if id is valid", async () => {
+    const blogsAtStart = await blogsInDb();
+    const blogToUpdate = blogsAtStart[0];
 
-  await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`, { title: "updated blog title" })
+      .expect(204);
 
-  const response = await api.get("/api/blogs");
+    const blogsAtEnd = await blogsInDb();
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+    const titles = blogsAtEnd.map((r) => r.title);
+
+    expect(titles).toContain(blogToUpdate.title);
+  });
 });
 
 afterAll(() => {
