@@ -98,7 +98,7 @@ describe("update of a blog", () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`, { title: "updated blog title" })
-      .expect(204);
+      .expect(201);
 
     const blogsAtEnd = await blogsInDb();
 
