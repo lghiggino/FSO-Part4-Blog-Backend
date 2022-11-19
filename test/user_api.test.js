@@ -36,7 +36,7 @@ describe("when there is initially one user in db", () => {
 
     const usernames = usersAtEnd.map((u) => u.username);
     expect(usernames).toContain(newUser.username);
-  });
+  }, 5000);
 
   test("creation fails with proper statuscode and message if username already taken", async () => {
     const usersAtStart = await usersInDb();
@@ -57,5 +57,26 @@ describe("when there is initially one user in db", () => {
 
     const usersAtEnd = await usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
-  });
+  }, 5000);
+
+  test("creation fails with proper statuscode and message if password is too short", async () => {
+    const usersAtStart = await usersInDb();
+
+    const newUser = {
+      username: "newUser",
+      name: "New User",
+      password: "123",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("password must be at least 3 characters long");
+
+    const usersAtEnd = await usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  }, 5000);
 });
