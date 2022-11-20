@@ -7,11 +7,23 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpEb2UiLCJpZCI6IjYzNzRjOGNhMzUwZmI2ZWQyZTNjYWI5ZSIsImlhdCI6MTY2ODk3MzY5MX0.EmGJHNua1T-3X5qNfZbmSarhFSQy7nW4f3vZinoE9cw
 
 {
-    "title": "Blog post using bearer authorization",
+    "title": "Validatind user token",
     "author": "John Doe",
     "url": "http://www.jwt.io",
     "likes": 0,
     "userId": "6374c8ca350fb6ed2e3cab9e"
 }
 ###
-DELETE http://localhost:3001/api/blogs/637a8503d163297021c18454
+DELETE http://localhost:3001/api/blogs/6374c936a4336dbe389a35e8
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpEb2UiLCJpZCI6IjYzNzRjOGNhMzUwZmI2ZWQyZTNjYWI5ZSIsImlhdCI6MTY2ODk3MzY5MX0.EmGJHNua1T-3X5qNfZbmSarhFSQy7nW4f3vZinoE9cw
+
+###
+PUT http://localhost:3001/api/blogs/6160eea59d17891205266f6f
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpEb2UiLCJpZCI6IjYzNzRjOGNhMzUwZmI2ZWQyZTNjYWI5ZSIsImlhdCI6MTY2ODk3MzY5MX0.EmGJHNua1T-3X5qNfZbmSarhFSQy7nW4f3vZinoE9cw
+
+{
+    "title": "Validating user token",
+    "url": "http://www.jwt.io",
+    "userId": "6374c8ca350fb6ed2e3cab9e"
+}
