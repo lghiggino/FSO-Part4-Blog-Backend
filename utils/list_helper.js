@@ -18,8 +18,22 @@ const initialBlogs = [
   },
 ];
 
+const initialUsers = [
+  {
+    username: "",
+    name: "",
+    passwordHash: "",
+    blogs: [],
+  },
+];
+
 const nonExistingId = async () => {
-  const blog = new Blog({ title: "willremovethissoon", author: "Leonardo Ghiggino", url: "http://www.google.com", likes: 0 });
+  const blog = new Blog({
+    title: "willremovethissoon",
+    author: "Leonardo Ghiggino",
+    url: "http://www.google.com",
+    likes: 0,
+  });
   await blog.save();
   await blog.remove();
 
@@ -47,4 +61,5 @@ module.exports = {
   nonExistingId,
   blogsInDb,
   usersInDb,
+  initialUsers,
 };
