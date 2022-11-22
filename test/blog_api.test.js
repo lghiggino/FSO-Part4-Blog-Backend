@@ -39,7 +39,7 @@ describe("when there is initially some blogs saved", () => {
 });
 
 describe("addition of a new blog", () => {
-  test("a valid blog can be added", async () => {
+  test.only("a valid blog can be added", async () => {
     const newBlog = {
       title: "async/await simplifies making async calls",
       author: "Mluukai",
@@ -48,8 +48,11 @@ describe("addition of a new blog", () => {
     };
 
     await api
-      .post("/api/blogs")
-      .send(newBlog)
+      .post("/api/blogs", newBlog, {
+        authorization:
+          "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpEb2UiLCJpZCI6IjYzNzRjOGNhMzUwZmI2ZWQyZTNjYWI5ZSIsImlhdCI6MTY2OTAyNzg4N30.829REyJtC7-zGJLAm8Br5WtfpowarH_OrO8WCAtVfOI",
+      })
+      // .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 

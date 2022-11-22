@@ -20,10 +20,12 @@ const initialBlogs = [
 
 const initialUsers = [
   {
-    username: "",
-    name: "",
-    passwordHash: "",
     blogs: [],
+    username: "root",
+    name: "Superuser",
+    passwordHash:
+      "$2b$10$EeGSueIzcawIfu.IKKrAo.eff0cH.8boC3MGJwR.wlPAj9dzHcmEe",
+    __v: 0,
   },
 ];
 
