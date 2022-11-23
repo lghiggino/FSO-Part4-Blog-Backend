@@ -2,18 +2,24 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blog.model");
-const {
-  tenSeconds,
-  initialBlogs,
-  nonExistingId,
-  blogsInDb,
-} = require("../utils/list_helper");
+const User = require("../models/user.model");
+const bcrypt = require("bcrypt");
+const { initialBlogs, blogsInDb } = require("../utils/list_helper");
 
 const api = supertest(app);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(initialBlogs);
+
+  const passwordHash = await bcrypt.hash("sekret", 10);
+  const user = new User({
+    username: "root",
+    passwordHash,
+    name: "Matti Luukkainen",
+  });
+
+  await user.save();
 });
 
 describe("when there is initially some blogs saved", () => {
@@ -40,19 +46,26 @@ describe("when there is initially some blogs saved", () => {
 
 describe("addition of a new blog", () => {
   test.only("a valid blog can be added", async () => {
+    const userCredentials = {
+      username: "root",
+      password: "sekret",
+    };
+
+    const loginResponse = await api.post("/api/login").send(userCredentials);
+    const { token, userId } = loginResponse.body;
+
     const newBlog = {
       title: "async/await simplifies making async calls",
       author: "Mluukai",
       url: "www.fullstackopen.com",
       likes: 3,
+      userId: `${userId}`,
     };
 
     await api
-      .post("/api/blogs", newBlog, {
-        authorization:
-          "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpEb2UiLCJpZCI6IjYzNzRjOGNhMzUwZmI2ZWQyZTNjYWI5ZSIsImlhdCI6MTY2OTAyNzg4N30.829REyJtC7-zGJLAm8Br5WtfpowarH_OrO8WCAtVfOI",
-      })
-      // .send(newBlog)
+      .post("/api/blogs")
+      .set({ Authorization: `Bearer ${token}` })
+      .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -78,11 +91,20 @@ describe("addition of a new blog", () => {
 });
 
 describe("deletion of a blog", () => {
-  test("succeeds with status code 204 if id is valid", async () => {
+  test.only("succeeds with status code 204 if id is valid", async () => {
+    test.only("a valid blog can be added", async () => {
+      const userCredentials = {
+        username: "root",
+        password: "sekret",
+      };
+  
+      const loginResponse = await api.post("/api/login").send(userCredentials);
+      const { token, userId } = loginResponse.body;
+
     const blogsAtStart = await blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    await api.delete(`/api/blogs/${blogToDelete.id}`).set({ Authorization: `Bearer ${token}` }).expect(204);
 
     const blogsAtEnd = await blogsInDb();
 
@@ -96,6 +118,14 @@ describe("deletion of a blog", () => {
 
 describe("update of a blog", () => {
   test("succeeds with status code 201 if id is valid", async () => {
+    const userCredentials = {
+      username: "root",
+      password: "sekret",
+    };
+
+    const loginResponse = await api.post("/api/login").set({ Authorization: `Bearer ${token}` }).send(userCredentials);
+    const { token, userId } = loginResponse.body;
+
     const blogsAtStart = await blogsInDb();
     const blogToUpdate = blogsAtStart[0];
 
