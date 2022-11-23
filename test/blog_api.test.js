@@ -45,7 +45,7 @@ describe("when there is initially some blogs saved", () => {
 });
 
 describe("addition of a new blog", () => {
-  test.only("a valid blog can be added", async () => {
+  test("a valid blog can be added", async () => {
     const userCredentials = {
       username: "root",
       password: "sekret",
@@ -78,11 +78,24 @@ describe("addition of a new blog", () => {
   });
 
   test("blog without title is not added", async () => {
-    const newBlog = {
-      likes: 0,
+    const userCredentials = {
+      username: "root",
+      password: "sekret",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    const loginResponse = await api.post("/api/login").send(userCredentials);
+    const { token, userId } = loginResponse.body;
+
+    const newBlog = {
+      likes: 0,
+      userId: `${userId}`,
+    };
+
+    await api
+      .post("/api/blogs")
+      .set({ Authorization: `Bearer ${token}` })
+      .send(newBlog)
+      .expect(400);
 
     const response = await api.get("/api/blogs");
 
@@ -91,20 +104,22 @@ describe("addition of a new blog", () => {
 });
 
 describe("deletion of a blog", () => {
-  test.only("succeeds with status code 204 if id is valid", async () => {
-    test.only("a valid blog can be added", async () => {
-      const userCredentials = {
-        username: "root",
-        password: "sekret",
-      };
-  
-      const loginResponse = await api.post("/api/login").send(userCredentials);
-      const { token, userId } = loginResponse.body;
+  test("succeeds with status code 204 if id is valid", async () => {
+    const userCredentials = {
+      username: "root",
+      password: "sekret",
+    };
+
+    const loginResponse = await api.post("/api/login").send(userCredentials);
+    const { token } = loginResponse.body;
 
     const blogsAtStart = await blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).set({ Authorization: `Bearer ${token}` }).expect(204);
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set({ Authorization: `Bearer ${token}` })
+      .expect(204);
 
     const blogsAtEnd = await blogsInDb();
 
@@ -123,21 +138,24 @@ describe("update of a blog", () => {
       password: "sekret",
     };
 
-    const loginResponse = await api.post("/api/login").set({ Authorization: `Bearer ${token}` }).send(userCredentials);
+    const loginResponse = await api.post("/api/login").send(userCredentials);
     const { token, userId } = loginResponse.body;
 
     const blogsAtStart = await blogsInDb();
     const blogToUpdate = blogsAtStart[0];
 
     await api
-      .put(`/api/blogs/${blogToUpdate.id}`, { title: "updated blog title" })
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .set({ Authorization: `Bearer ${token}` })
+      .send({ title: "updated blog title", userId })
       .expect(201);
 
     const blogsAtEnd = await blogsInDb();
+    console.log(blogsAtEnd);
 
     const titles = blogsAtEnd.map((r) => r.title);
 
-    expect(titles).toContain(blogToUpdate.title);
+    expect(titles).toContain("updated blog title");
   });
 });
 
