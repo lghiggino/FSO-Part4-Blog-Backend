@@ -104,20 +104,21 @@ describe("addition of a new blog", () => {
 });
 
 describe("deletion of a blog", () => {
-  test("succeeds with status code 204 if id is valid", async () => {
+  test.only("succeeds with status code 204 if id is valid", async () => {
     const userCredentials = {
       username: "root",
       password: "sekret",
     };
 
     const loginResponse = await api.post("/api/login").send(userCredentials);
-    const { token } = loginResponse.body;
+    const { token, userId } = loginResponse.body;
 
     const blogsAtStart = await blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .send({ userId })
       .set({ Authorization: `Bearer ${token}` })
       .expect(204);
 

@@ -9,12 +9,14 @@ const initialBlogs = [
     author: "Leonardo N Ghiggino",
     url: "http://localhost:3001/teste/teste",
     likes: 1,
+    user: "637df2d4f7b0347e590712f9"
   },
   {
     title: "Blog 02",
     author: "Leonardo N Ghiggino",
     url: "http://localhost:3001/teste/teste",
     likes: 2,
+    user: "637df2d4f7b0347e590712f9"
   },
 ];
 
@@ -44,6 +46,7 @@ const nonExistingId = async () => {
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({});
+  console.log(blogs)
   return blogs.map((blog) => blog.toJSON());
 };
 
