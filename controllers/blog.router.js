@@ -82,7 +82,7 @@ blogsRouter.put("/:id", async (request, response, next) => {
   try {
     const body = request.body;
 
-    const note = {
+    const blog = {
       title: body.title,
       url: body.url,
     };
@@ -97,9 +97,32 @@ blogsRouter.put("/:id", async (request, response, next) => {
       return response.status(401).json({ error: "invalid token" });
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, note, {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
       new: true,
     });
+    response.status(201).json(updatedBlog);
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogsRouter.put("/:id/addlike", async (request, response, next) => {
+  try {
+    const oldBlog = await Blog.findById(request.params.id);
+
+    if (!oldBlog.likes) {
+      oldBlog.likes = 0;
+    }
+
+    const newWithExtraLike = { likes: oldBlog.likes + 1 };
+
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      newWithExtraLike,
+      {
+        new: true,
+      }
+    );
     response.status(201).json(updatedBlog);
   } catch (error) {
     next(error);
