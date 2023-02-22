@@ -2,6 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog.model");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const { isObjectIdOrHexString } = require("mongoose");
 
 blogsRouter.get("/", async (request, response, next) => {
   try {
@@ -63,16 +64,24 @@ blogsRouter.delete("/:id", async (request, response, next) => {
     const body = request.body;
     const token = getTokenFrom(request);
     const decodedToken = jwt.verify(token, process.env.SECRET);
+
+    console.log({ body, token, decodedToken });
+
     if (!decodedToken.id) {
       return response.status(401).json({ error: "token missing or invalid" });
     }
 
-    if (body.userId !== decodedToken.id) {
+    const blogToBeDeleted = await Blog.findById(request.params.id);
+    console.log(blogToBeDeleted);
+
+    if ((decodedToken.username !== blogToBeDeleted.author) ) {
       return response.status(401).json({ error: "invalid token" });
     }
 
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
+    if (decodedToken.username === blogToBeDeleted.author) {
+      await Blog.findByIdAndRemove(request.params.id);
+      response.status(204).end();
+    }
   } catch (error) {
     next(error);
   }
