@@ -2,7 +2,6 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog.model");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
-const { isObjectIdOrHexString } = require("mongoose");
 
 blogsRouter.get("/", async (request, response, next) => {
   try {
